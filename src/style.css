@@ -1,4 +1,7 @@
-:root { color-scheme: dark; --bg: #0b0d12; --fg: #f1f4fa; --accent: #2f7fd8; --warn: #ff5252; }
+:root { color-scheme: dark; --bg: #0b0d12; --fg: #f1f4fa; --accent: #2f7fd8; --warn: #ff5252;
+  /* 8 px from each edge, or the notch / home-indicator inset on iPhone (the viewport uses viewport-fit=cover) */
+  --st: max(8px, env(safe-area-inset-top)); --sr: max(8px, env(safe-area-inset-right));
+  --sb: max(8px, env(safe-area-inset-bottom)); --sl: max(8px, env(safe-area-inset-left)); }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; overflow: hidden; }
 canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
@@ -8,8 +11,8 @@ canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 .btn.primary { background: var(--accent); }
 
 [hidden] { display: none !important; }
-#bar { position: fixed; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 10; }
-.stack { position: fixed; top: 8px; right: 8px; width: min(340px, calc(100vw - 112px)); max-height: calc(100vh - 16px); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
+#bar { position: fixed; top: var(--st); left: var(--sl); display: flex; flex-direction: column; gap: 6px; z-index: 10; }
+.stack { position: fixed; top: var(--st); right: var(--sr); width: min(340px, calc(100vw - var(--sl) - var(--sr) - 96px)); max-height: calc(100vh - var(--st) - var(--sb)); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
 .stack .panel { width: 100%; }
 .panel { background: rgba(10, 14, 24, .88); border: 1px solid #3a4a68; border-radius: 10px; padding: 6px 10px; }
 .panel .head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-weight: 600; }
@@ -28,23 +31,24 @@ table.caps td { padding: 2px 0; word-break: break-word; }
 .copy { width: 100%; font: 11px monospace; background: #000; color: #9f9; }
 .results { padding-left: 20px; font-size: 12px; margin: 4px 0; }
 
-#fps { position: fixed; left: 8px; bottom: 8px; z-index: 10; font: 12px ui-monospace, monospace; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, .65); }
+#fps { position: fixed; left: var(--sl); bottom: var(--sb); z-index: 10; font: 12px ui-monospace, monospace; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, .65); }
 #fps.bad { color: #fff; background: var(--warn); }
 
-#start { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(5, 8, 14, .92); padding: 16px; }
+#start { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(5, 8, 14, .92);
+  padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
 #start .card { max-width: 480px; }
 #start h1 { margin: 0 0 8px; font-size: 22px; }
 
 /* Stereo split screen: DOM panels would sit in one eye only, so hide them (the FPS box and exit button stay). */
 body.stereo .ui, body.stereo #bar .btn:not(.keep) { display: none; }
-body.stereo #bar { top: auto; bottom: 8px; left: auto; right: 8px; flex-direction: row; }
-body.stereo #fps { left: 8px; }
+body.stereo #bar { top: auto; bottom: var(--sb); left: auto; right: var(--sr); flex-direction: row; }
+body.stereo #fps { left: var(--sl); }
 #bar .keep { display: none; }
 body.stereo #bar .keep { display: inline-block; }
 
 /* three's VRButton sets its own position; centre it at the bottom of the screen instead. */
-.vrbtn { position: fixed !important; left: 50% !important; right: auto !important; bottom: 16px !important; transform: translateX(-50%); width: auto !important; min-height: 44px; padding: 10px 16px !important; background: #1b5e20 !important; border-radius: 8px !important; opacity: 1 !important; z-index: 10; }
+.vrbtn { position: fixed !important; left: 50% !important; right: auto !important; bottom: max(16px, env(safe-area-inset-bottom)) !important; transform: translateX(-50%); width: auto !important; min-height: 44px; padding: 10px 16px !important; background: #1b5e20 !important; border-radius: 8px !important; opacity: 1 !important; z-index: 10; }
 body.stereo .vrbtn { display: none !important; }
 
 /* Build footer (commit hash), bottom right. Hidden in stereo with the other DOM panels (.ui). */
-#build { position: fixed; right: 8px; bottom: 4px; z-index: 9; font: 11px ui-monospace, monospace; color: #8fa0bd; pointer-events: none; }
+#build { position: fixed; right: var(--sr); bottom: max(4px, env(safe-area-inset-bottom)); z-index: 9; font: 11px ui-monospace, monospace; color: #8fa0bd; pointer-events: none; }
