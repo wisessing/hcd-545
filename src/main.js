@@ -30,19 +30,25 @@ const look = new LookControls(camera, renderer.domElement, settings);
 
 // ---- DOM UI -----------------------------------------------------------------------------------------------------
 const renderMode = () => (renderer.xr.isPresenting ? 'immersive-vr (WebXR)' : 'monocular');
+// Cues cycles through three views of the scene: everything, only the geometric solids, only the sofa.
+const CUE_MODES = [['all', 'all'], ['solids', 'solids'], ['sofa', 'sofa']];
+const cueIndex = () => Math.max(0, CUE_MODES.findIndex(([k]) => k === settings.cues));   // older saved values (true/false) become 'all'
+const cuesButton = button('', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length][0]));
+const showCues = () => { cuesButton.textContent = 'Cues: ' + CUE_MODES[cueIndex()][1]; };
+showCues();
 const caps = createCapsPanel({ lab: 'lab1', look, getRenderMode: renderMode, getInputMode: () => (renderer.xr.isPresenting ? 'headset (XR)' : look.mode) });
 document.body.append(
   h('div', { class: 'stack' }, caps.el, caps.showBtn),
   h('div', { id: 'bar' },
     button('Recenter', () => look.recenter()),
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
-    button('Cues', () => set('cues', !settings.cues))));
+    cuesButton));
 
 addFooter();   // "build <commit hash>": shows which commit a deployed page was built from
 
 onChange((key) => {
   if (key === 'sky') env.setSky(settings.sky);
-  if (key === 'cues') env.setCues(settings.cues);
+  if (key === 'cues') { env.setCues(CUE_MODES[cueIndex()][0]); showCues(); }
 });
 
 // "Enter VR" only appears if the browser says immersive-vr is supported. Whether it really STARTS is a different question:

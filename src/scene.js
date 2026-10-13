@@ -1,7 +1,9 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { settings } from './settings.js';
 
-// 1 three.js unit = 1 metre. Scale cues (a 2 m door, a 1.7 m figure) tell the brain how big the room is.
+// 1 three.js unit = 1 metre. A real-size sofa is the scale cue that tells the brain how big the room is.
 function canvasTexture(w, h, draw) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -61,9 +63,11 @@ export function createEnvironment(scene) {
     sky.material.needsUpdate = true;
   }
 
-  // Objects of different sizes at different distances (parallax and size cues).
+  // Geometric solids of different sizes at different distances (parallax and size cues).
+  // The blue cube (index 1, 1 m wide) is the object measured in the Lab 1 experiment, so it stays visible in every cue mode.
   const props = new THREE.Group();
-  root.add(props);
+  const target = new THREE.Group();
+  root.add(props, target);
   const palette = [0xe4572e, 0x29b6f6, 0xf6c445, 0x8e6bbf, 0x4caf7d];
   const specs = [
     [-2, 0.25, -3, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.15, -2, 0.3], [5, 0.75, -8, 1.5],
@@ -74,7 +78,7 @@ export function createEnvironment(scene) {
       i % 2 ? new THREE.BoxGeometry(s, s, s) : new THREE.SphereGeometry(s / 2, 24, 16),
       new THREE.MeshStandardMaterial({ color: palette[i % palette.length], roughness: 0.6 }));
     m.position.set(x, y, z);
-    props.add(m);
+    (i === 1 ? target : props).add(m);
   });
   const orbiter = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.25, 0.08, 96, 12),
@@ -82,29 +86,20 @@ export function createEnvironment(scene) {
   orbiter.position.set(0, 1.4, -5);
   props.add(orbiter);
 
-  // Human-scale cues: a 0.9 x 2.0 m door frame and a 1.7 m figure.
-  const cues = new THREE.Group();
-  const frameMat = new THREE.MeshStandardMaterial({ color: 0x8a5a2b });
-  const door = new THREE.Group();
-  [[-0.5, 1, 0, 0.1, 2, 0.1], [0.5, 1, 0, 0.1, 2, 0.1], [0, 2.05, 0, 1.1, 0.1, 0.1]].forEach(([x, y, z, w, hh, d]) => {
-    const p = new THREE.Mesh(new THREE.BoxGeometry(w, hh, d), frameMat);
-    p.position.set(x, y, z);
-    door.add(p);
-  });
-  door.position.set(-3.5, 0, -6);
-  door.rotation.y = 0.5;
-  cues.add(door);
-  const figure = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 1.1, 4, 12), new THREE.MeshStandardMaterial({ color: 0x3355aa }));
-  body.position.y = 0.75;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 12), new THREE.MeshStandardMaterial({ color: 0xd9a37a }));
-  head.position.y = 1.6;
-  figure.add(body, head);
-  figure.position.set(0.8, 0, -5.5);
-  cues.add(figure);
-  root.add(cues);
+  // Real-size scale cue: a sofa, 2.73 x 1.12 x 0.92 m. The glTF file is in metres and is used at its authored size.
+  // See public/models/CREDITS.md for the source, the licence and the size check.
+  const sofa = new THREE.Group();
+  root.add(sofa);
+  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+  const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
+  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; sofa.add(g.scene); }, undefined,
+    (e) => console.warn('sofa.glb did not load', e));
 
-  function setCues(on) { cues.visible = on; }
+  // mode: 'all' | 'solids' | 'sofa'. Older saved settings held true or false: treat anything else as 'all'.
+  function setCues(mode) {
+    props.visible = mode !== 'sofa';
+    sofa.visible = mode !== 'solids';
+  }
 
   setSky(settings.sky);
   setCues(settings.cues);
