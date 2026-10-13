@@ -7,10 +7,13 @@ canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 .btn:active, .btn:focus-visible { outline: 2px solid #fff; background: var(--accent); }
 .btn.primary { background: var(--accent); }
 
-#bar { position: fixed; bottom: 44px; left: 8px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100vw - 16px); z-index: 10; }
-.stack { position: fixed; top: 8px; right: 8px; width: min(340px, calc(100vw - 16px)); max-height: calc(100vh - 80px); overflow: auto; display: flex; flex-direction: column; gap: 6px; z-index: 10; }
+[hidden] { display: none !important; }
+#bar { position: fixed; top: 8px; left: 8px; display: flex; flex-direction: column; gap: 6px; z-index: 10; }
+.stack { position: fixed; top: 8px; right: 8px; width: min(340px, calc(100vw - 112px)); max-height: calc(100vh - 16px); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
+.stack .panel { width: 100%; }
 .panel { background: rgba(10, 14, 24, .88); border: 1px solid #3a4a68; border-radius: 10px; padding: 6px 10px; }
-.panel summary { cursor: pointer; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.panel .head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; font-weight: 600; }
+.panel .close { min-height: 36px; padding: 4px 10px; }
 .panel .body { padding: 4px 0 8px; }
 .row { display: grid; grid-template-columns: 1fr 1.2fr 3.2em; gap: 8px; align-items: center; margin: 6px 0; }
 .row.check { grid-template-columns: 24px 1fr; }
@@ -34,13 +37,13 @@ table.caps td { padding: 2px 0; word-break: break-word; }
 
 /* Stereo split screen: DOM panels would sit in one eye only, so hide them (the FPS box and exit button stay). */
 body.stereo .ui, body.stereo #bar .btn:not(.keep) { display: none; }
-body.stereo #bar { bottom: 8px; left: auto; right: 8px; }
+body.stereo #bar { top: auto; bottom: 8px; left: auto; right: 8px; flex-direction: row; }
 body.stereo #fps { left: 8px; }
 #bar .keep { display: none; }
 body.stereo #bar .keep { display: inline-block; }
 
-/* three's VRButton is absolutely positioned by default; park it in the toolbar instead. */
-#bar .vrbtn { position: static !important; width: auto !important; left: auto !important; bottom: auto !important; min-height: 44px; padding: 10px 12px !important; background: #1b5e20 !important; border-radius: 8px !important; opacity: 1 !important; }
+/* three's VRButton sets its own position; centre it at the bottom of the screen instead. */
+.vrbtn { position: fixed !important; left: 50% !important; right: auto !important; bottom: 16px !important; transform: translateX(-50%); width: auto !important; min-height: 44px; padding: 10px 16px !important; background: #1b5e20 !important; border-radius: 8px !important; opacity: 1 !important; z-index: 10; }
 body.stereo .vrbtn { display: none !important; }
 
 /* Build footer (commit hash), bottom right. Hidden in stereo with the other DOM panels (.ui). */

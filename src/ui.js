@@ -46,8 +46,13 @@ export function select({ label, options, value, onInput }) {
   return el;
 }
 
-export function collapsible(title, ...kids) {
-  return h('details', { class: 'ui panel' }, h('summary', {}, title), h('div', { class: 'body' }, ...kids));
+// A floating panel with a close button. The caller puts a matching "show" button on screen (see capabilities.js).
+export function closablePanel(title, onClose, ...kids) {
+  return h('div', { class: 'ui panel' },
+    h('div', { class: 'head' },
+      h('strong', {}, title),
+      h('button', { type: 'button', class: 'btn close', 'aria-label': 'Close ' + title, onClick: onClose }, '\u2715')),
+    h('div', { class: 'body' }, ...kids));
 }
 
 // A start card. The click handler is the one user gesture we get, so everything that needs a gesture

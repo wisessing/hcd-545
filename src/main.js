@@ -32,7 +32,7 @@ const look = new LookControls(camera, renderer.domElement, settings);
 const renderMode = () => (renderer.xr.isPresenting ? 'immersive-vr (WebXR)' : 'monocular');
 const caps = createCapsPanel({ lab: 'lab1', look, getRenderMode: renderMode, getInputMode: () => (renderer.xr.isPresenting ? 'headset (XR)' : look.mode) });
 document.body.append(
-  h('div', { class: 'stack' }, caps.el),
+  h('div', { class: 'stack' }, caps.el, caps.showBtn),
   h('div', { id: 'bar' },
     button('Recenter', () => look.recenter()),
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
@@ -49,7 +49,7 @@ onChange((key) => {
 // press it and watch the "Enter VR started" row in the capability panel.
 if (navigator.xr) {
   navigator.xr.isSessionSupported('immersive-vr').then((ok) => {
-    if (ok) { const b = VRButton.createButton(renderer); b.classList.add('vrbtn'); document.getElementById('bar').append(b); }
+    if (ok) { const b = VRButton.createButton(renderer); b.classList.add('vrbtn'); document.body.append(b); }
   }).catch(() => {});
 }
 function refreshSources() {

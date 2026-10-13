@@ -1,4 +1,4 @@
-import { h, button, collapsible } from './ui.js';
+import { h, button, closablePanel } from './ui.js';
 
 // Capability detection panel. The W1 question: does THIS device offer WebXR immersive-vr?
 // "isSessionSupported" answers "does the browser claim support"; "Test requestSession" answers "does it actually start".
@@ -108,7 +108,8 @@ export function createCapsPanel({ lab, look, getRenderMode, getInputMode }) {
     }
   }
 
-  const el = collapsible('Capabilities',
+  let open = lab === 'lab1';   // open at the start only in Lab 1, where reading it is the task
+  const el = closablePanel('Capabilities', () => setOpen(false),
     table,
     h('div', { class: 'btnrow' },
       button('Re-detect', detect),
@@ -116,14 +117,15 @@ export function createCapsPanel({ lab, look, getRenderMode, getInputMode }) {
       button('Copy report', copy)),
     note, copyOut);
   el.id = 'caps';
-  el.open = lab === 'lab1';   // open by default only in Lab 1, where reading it is the task
-
-  el.addEventListener('toggle', render);
+  const showBtn = button('Capabilities', () => setOpen(true), 'show');   // top right; brings the panel back
+  function setOpen(v) { open = v; el.hidden = !v; showBtn.hidden = v; if (v) render(); }
+  setOpen(open);
   detect();
-  setInterval(() => { if (el.open) render(); }, 1000);
+  setInterval(() => { if (open) render(); }, 1000);
 
   return {
     el,
+    showBtn,
     setSessionState(text) { state['Enter VR started'] = text; render(); },
     setInputSources(text) { state['XR input sources'] = text; render(); },
     report,
