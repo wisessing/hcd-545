@@ -99,18 +99,24 @@ export function createEnvironment(scene) {
   // used at their authored size. See public/models/CREDITS.md for the source, the licence and the size check.
   const models = new THREE.Group();
   root.add(models);
-  const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
-  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-4.4, 0, -5.8); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
-    (e) => console.warn('sofa.glb did not load', e));
-  loader.load(url('car.glb'), (g) => { g.scene.position.set(-11, 0, -2.5); g.scene.rotation.y = -0.22; castAndReceive(g.scene); models.add(g.scene); }, undefined,
-    (e) => console.warn('car.glb did not load', e));
+  let modelsRequested = false;
+  function loadModels() {   // about 3 MB: downloaded the first time the sofa and car are asked for, not at page load
+    if (modelsRequested) return;
+    modelsRequested = true;
+    const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
+    loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-4.4, 0, -5.8); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
+      (e) => console.warn('sofa.glb did not load', e));
+    loader.load(url('car.glb'), (g) => { g.scene.position.set(-11, 0, -2.5); g.scene.rotation.y = -0.22; castAndReceive(g.scene); models.add(g.scene); }, undefined,
+      (e) => console.warn('car.glb did not load', e));
+  }
 
-  // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'all'.
+  // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'solids'.
   function setCues(mode) {
     props.visible = mode !== 'models';
     target.visible = mode !== 'models';
     models.visible = mode !== 'solids';
+    if (mode !== 'solids') loadModels();
   }
 
   function setShadows(on) { sun.castShadow = on; }

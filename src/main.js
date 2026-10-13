@@ -34,7 +34,7 @@ const look = new LookControls(camera, renderer.domElement, settings);
 const renderMode = () => (renderer.xr.isPresenting ? 'immersive-vr (WebXR)' : 'monocular');
 // Cues cycles through three views of the scene: everything, only the geometric solids, only the sofa and the car.
 const CUE_MODES = ['all', 'solids', 'models'];
-const cueIndex = () => Math.max(0, CUE_MODES.indexOf(settings.cues));   // older saved values (true/false) become 'all'
+const cueIndex = () => { const i = CUE_MODES.indexOf(settings.cues); return i < 0 ? 1 : i; };   // older saved values (true/false) become 'solids'
 function applyCues() {
   const mode = CUE_MODES[cueIndex()];
   env.setCues(mode);
