@@ -35,14 +35,20 @@ export function createEnvironment(scene) {
   scene.add(root);
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.6));
-  const sun = new THREE.DirectionalLight(0xffffff, 2.0);
+  const sun = new THREE.DirectionalLight(0xffffff, 2.0);   // the sun: one directional light, aimed at the origin
   sun.position.set(4, 8, 3);
+  sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 0.5, far: 30 });
+  sun.shadow.bias = -0.0005;
+  sun.shadow.normalBias = 0.02;
   scene.add(sun);
+  const castAndReceive = (obj) => obj.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
 
   // Floor and a 1 m grid (a ruler for free).
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(40, 64).rotateX(-Math.PI / 2),
     new THREE.MeshStandardMaterial({ color: 0x5a6b5a, roughness: 1 }));
+  floor.receiveShadow = true;
   root.add(floor);
   const grid = new THREE.GridHelper(60, 60, 0xffffff, 0x99aa99);
   grid.position.y = 0.005;
@@ -69,21 +75,24 @@ export function createEnvironment(scene) {
   const target = new THREE.Group();
   root.add(props, target);
   const palette = [0xe4572e, 0x29b6f6, 0xf6c445, 0x8e6bbf, 0x4caf7d];
+  // [x, y, z, size]: y is the centre height. Some solids float above the floor, some rest on it (y = size / 2). Shadows show which.
   const specs = [
-    [-2, 0.25, -3, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.15, -2, 0.3], [5, 0.75, -8, 1.5],
-    [-6, 1.0, -10, 2.0], [-4, 0.3, 2, 0.6], [4, 0.4, 3, 0.8], [0, 0.5, 6, 1.0],
+    [-2, 1.2, -3, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.9, -2, 0.3], [5, 0.75, -8, 1.5],
+    [-6, 1.0, -10, 2.0], [-4, 1.0, 2, 0.6], [4, 0.4, 3, 0.8], [0, 0.5, 6, 1.0],
   ];
   specs.forEach(([x, y, z, s], i) => {
     const m = new THREE.Mesh(
       i % 2 ? new THREE.BoxGeometry(s, s, s) : new THREE.SphereGeometry(s / 2, 24, 16),
       new THREE.MeshStandardMaterial({ color: palette[i % palette.length], roughness: 0.6 }));
     m.position.set(x, y, z);
+    m.castShadow = m.receiveShadow = true;
     (i === 1 ? target : props).add(m);
   });
   const orbiter = new THREE.Mesh(
     new THREE.TorusKnotGeometry(0.25, 0.08, 96, 12),
     new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.3 }));
   orbiter.position.set(0, 1.4, -5);
+  orbiter.castShadow = orbiter.receiveShadow = true;
   props.add(orbiter);
 
   // Real-size scale cues: a sofa (2.73 x 1.12 x 0.92 m) and a car (2.54 x 1.15 x 4.36 m). Both glTF files are in metres and are
@@ -92,9 +101,9 @@ export function createEnvironment(scene) {
   root.add(models);
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
-  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; models.add(g.scene); }, undefined,
+  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('sofa.glb did not load', e));
-  loader.load(url('car.glb'), (g) => { g.scene.position.set(5.5, 0, -9); g.scene.rotation.y = -1.2; models.add(g.scene); }, undefined,
+  loader.load(url('car.glb'), (g) => { g.scene.position.set(5.5, 0, -9); g.scene.rotation.y = -1.2; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('car.glb did not load', e));
 
   // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'all'.
@@ -104,11 +113,14 @@ export function createEnvironment(scene) {
     models.visible = mode !== 'solids';
   }
 
+  function setShadows(on) { sun.castShadow = on; }
+
   setSky(settings.sky);
   setCues(settings.cues);
+  setShadows(settings.shadows);
 
   return {
-    root, floor, setSky, setCues,
+    root, floor, setSky, setCues, setShadows,
     update(t) {
       if (!settings.reducedMotion) { orbiter.rotation.y = t * 0.6; orbiter.rotation.x = t * 0.3; }
     },

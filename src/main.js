@@ -15,6 +15,7 @@ import { addFooter } from './footer.js';
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.xr.enabled = true;                       // lets the same renderer present to a headset
+renderer.shadowMap.enabled = true;                // shadows themselves are switched on and off with the Shadows button
 document.body.append(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -26,34 +27,36 @@ scene.add(rig);
 
 const env = createEnvironment(scene);
 const mine = addMyContent(scene);
+mine.mine.castShadow = mine.mine.receiveShadow = true;
 const look = new LookControls(camera, renderer.domElement, settings);
 
 // ---- DOM UI -----------------------------------------------------------------------------------------------------
 const renderMode = () => (renderer.xr.isPresenting ? 'immersive-vr (WebXR)' : 'monocular');
 // Cues cycles through three views of the scene: everything, only the geometric solids, only the sofa and the car.
-const CUE_MODES = [['all', 'all'], ['solids', 'solids'], ['models', 'sofa + car']];
-const cueIndex = () => Math.max(0, CUE_MODES.findIndex(([k]) => k === settings.cues));   // older saved values (true/false) become 'all'
-const cuesButton = button('', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length][0]));
+const CUE_MODES = ['all', 'solids', 'models'];
+const cueIndex = () => Math.max(0, CUE_MODES.indexOf(settings.cues));   // older saved values (true/false) become 'all'
 function applyCues() {
-  const mode = CUE_MODES[cueIndex()][0];
+  const mode = CUE_MODES[cueIndex()];
   env.setCues(mode);
   mine.mine.visible = mode !== 'models';   // your own cube is a solid too
-  cuesButton.textContent = 'Cues: ' + CUE_MODES[cueIndex()][1];
 }
 applyCues();
+env.setShadows(settings.shadows);
 const caps = createCapsPanel({ lab: 'lab1', look, getRenderMode: renderMode, getInputMode: () => (renderer.xr.isPresenting ? 'headset (XR)' : look.mode) });
 document.body.append(
   h('div', { class: 'stack' }, caps.el, caps.showBtn),
   h('div', { id: 'bar' },
     button('Recenter', () => look.recenter()),
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
-    cuesButton));
+    button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length])),
+    button('Shadows', () => set('shadows', !settings.shadows))));
 
 addFooter();   // "build <commit hash>": shows which commit a deployed page was built from
 
 onChange((key) => {
   if (key === 'sky') env.setSky(settings.sky);
   if (key === 'cues') applyCues();
+  if (key === 'shadows') env.setShadows(settings.shadows);
 });
 
 // "Enter VR" only appears if the browser says immersive-vr is supported. Whether it really STARTS is a different question:
