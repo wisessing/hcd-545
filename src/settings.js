@@ -8,7 +8,7 @@ const prefersReduced = (() => {
 export const defaults = {
   // Lab 1
   sky: 'gradient',        // 'gradient' | 'checker' | 'dark'
-  cues: 'all',            // scale cues: 'all' | 'solids' (geometric solids only) | 'sofa' (the sofa only)
+  cues: 'all',            // scale cues: 'all' | 'solids' (geometric solids only) | 'models' (sofa and car only)
   // Lab 2
   ipd: 0.064,             // metres, used by StereoEffect.setEyeSeparation
   latencyMs: 0,           // artificial head-tracking latency

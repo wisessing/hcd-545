@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { settings } from './settings.js';
 
-// 1 three.js unit = 1 metre. A real-size sofa is the scale cue that tells the brain how big the room is.
+// 1 three.js unit = 1 metre. A real-size sofa and car are the scale cues that tell the brain how big the room is.
 function canvasTexture(w, h, draw) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -64,7 +64,7 @@ export function createEnvironment(scene) {
   }
 
   // Geometric solids of different sizes at different distances (parallax and size cues).
-  // The blue cube (index 1, 1 m wide) is the object measured in the Lab 1 experiment, so it stays visible in every cue mode.
+  // The blue cube (index 1, 1 m wide) is the object measured in the Lab 1 experiment. It counts as a solid: hidden in 'models' mode.
   const props = new THREE.Group();
   const target = new THREE.Group();
   root.add(props, target);
@@ -86,19 +86,22 @@ export function createEnvironment(scene) {
   orbiter.position.set(0, 1.4, -5);
   props.add(orbiter);
 
-  // Real-size scale cue: a sofa, 2.73 x 1.12 x 0.92 m. The glTF file is in metres and is used at its authored size.
-  // See public/models/CREDITS.md for the source, the licence and the size check.
-  const sofa = new THREE.Group();
-  root.add(sofa);
+  // Real-size scale cues: a sofa (2.73 x 1.12 x 0.92 m) and a car (2.54 x 1.15 x 4.36 m). Both glTF files are in metres and are
+  // used at their authored size. See public/models/CREDITS.md for the source, the licence and the size check.
+  const models = new THREE.Group();
+  root.add(models);
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
-  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; sofa.add(g.scene); }, undefined,
+  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; models.add(g.scene); }, undefined,
     (e) => console.warn('sofa.glb did not load', e));
+  loader.load(url('car.glb'), (g) => { g.scene.position.set(5.5, 0, -9); g.scene.rotation.y = -1.2; models.add(g.scene); }, undefined,
+    (e) => console.warn('car.glb did not load', e));
 
-  // mode: 'all' | 'solids' | 'sofa'. Older saved settings held true or false: treat anything else as 'all'.
+  // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'all'.
   function setCues(mode) {
-    props.visible = mode !== 'sofa';
-    sofa.visible = mode !== 'solids';
+    props.visible = mode !== 'models';
+    target.visible = mode !== 'models';
+    models.visible = mode !== 'solids';
   }
 
   setSky(settings.sky);
