@@ -1,4 +1,4 @@
-Live: https://wisessing.github.io/HCD-545/
+Live: https://wisessing.github.io/hcd-545/
 
 <!--
 HOW TO USE THIS TEMPLATE (delete this comment block before the oral)
