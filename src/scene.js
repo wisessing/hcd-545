@@ -77,8 +77,8 @@ export function createEnvironment(scene) {
   const palette = [0xe4572e, 0x29b6f6, 0xf6c445, 0x8e6bbf, 0x4caf7d];
   // [x, y, z, size]: y is the centre height. Some solids float above the floor, some rest on it (y = size / 2). Shadows show which.
   const specs = [
-    [-2, 1.2, -3, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.9, -2, 0.3], [5, 0.75, -8, 1.5],
-    [-6, 1.0, -10, 2.0], [-4, 1.0, 2, 0.6], [4, 0.4, 3, 0.8], [0, 0.5, 6, 1.0],
+    [-0.7, 1.2, -4, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.9, -2, 0.3], [7.5, 0.75, -9, 1.5],
+    [-5, 1.0, -14, 2.0], [-4, 1.0, 2, 0.6], [4, 0.4, 3, 0.8], [0, 0.5, 6, 1.0],
   ];
   specs.forEach(([x, y, z, s], i) => {
     const m = new THREE.Mesh(
@@ -103,7 +103,7 @@ export function createEnvironment(scene) {
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
   loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-4.4, 0, -5.8); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('sofa.glb did not load', e));
-  loader.load(url('car.glb'), (g) => { g.scene.position.set(2, 0, -12); g.scene.rotation.y = -1.35; castAndReceive(g.scene); models.add(g.scene); }, undefined,
+  loader.load(url('car.glb'), (g) => { g.scene.position.set(-11, 0, -2.5); g.scene.rotation.y = -0.22; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('car.glb did not load', e));
 
   // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'all'.
