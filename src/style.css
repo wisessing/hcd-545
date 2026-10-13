@@ -1,0 +1,47 @@
+:root { color-scheme: dark; --bg: #0b0d12; --fg: #f1f4fa; --accent: #2f7fd8; --warn: #ff5252; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; overflow: hidden; }
+canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
+
+.btn { font: inherit; color: var(--fg); background: rgba(20, 30, 50, .85); border: 1px solid #5d7aa6; border-radius: 8px; padding: 10px 12px; min-height: 44px; min-width: 44px; cursor: pointer; }
+.btn:active, .btn:focus-visible { outline: 2px solid #fff; background: var(--accent); }
+.btn.primary { background: var(--accent); }
+
+#bar { position: fixed; bottom: 44px; left: 8px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100vw - 16px); z-index: 10; }
+.stack { position: fixed; top: 8px; right: 8px; width: min(340px, calc(100vw - 16px)); max-height: calc(100vh - 80px); overflow: auto; display: flex; flex-direction: column; gap: 6px; z-index: 10; }
+.panel { background: rgba(10, 14, 24, .88); border: 1px solid #3a4a68; border-radius: 10px; padding: 6px 10px; }
+.panel summary { cursor: pointer; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.panel .body { padding: 4px 0 8px; }
+.row { display: grid; grid-template-columns: 1fr 1.2fr 3.2em; gap: 8px; align-items: center; margin: 6px 0; }
+.row.check { grid-template-columns: 24px 1fr; }
+.row select { grid-column: span 2; font: inherit; min-height: 36px; }
+.row input[type=range] { width: 100%; min-height: 32px; }
+.row output { text-align: right; font-variant-numeric: tabular-nums; }
+.btnrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+table.caps { width: 100%; border-collapse: collapse; font-size: 12px; }
+table.caps th { text-align: left; font-weight: 500; color: #aab8d0; padding: 2px 6px 2px 0; vertical-align: top; width: 48%; }
+table.caps td { padding: 2px 0; word-break: break-word; }
+.hint { color: #aab8d0; font-size: 12px; margin: 6px 0; }
+.copy { width: 100%; font: 11px monospace; background: #000; color: #9f9; }
+.results { padding-left: 20px; font-size: 12px; margin: 4px 0; }
+
+#fps { position: fixed; left: 8px; bottom: 8px; z-index: 10; font: 12px ui-monospace, monospace; padding: 4px 8px; border-radius: 6px; background: rgba(0, 0, 0, .65); }
+#fps.bad { color: #fff; background: var(--warn); }
+
+#start { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(5, 8, 14, .92); padding: 16px; }
+#start .card { max-width: 480px; }
+#start h1 { margin: 0 0 8px; font-size: 22px; }
+
+/* Stereo split screen: DOM panels would sit in one eye only, so hide them (the FPS box and exit button stay). */
+body.stereo .ui, body.stereo #bar .btn:not(.keep) { display: none; }
+body.stereo #bar { bottom: 8px; left: auto; right: 8px; }
+body.stereo #fps { left: 8px; }
+#bar .keep { display: none; }
+body.stereo #bar .keep { display: inline-block; }
+
+/* three's VRButton is absolutely positioned by default; park it in the toolbar instead. */
+#bar .vrbtn { position: static !important; width: auto !important; left: auto !important; bottom: auto !important; min-height: 44px; padding: 10px 12px !important; background: #1b5e20 !important; border-radius: 8px !important; opacity: 1 !important; }
+body.stereo .vrbtn { display: none !important; }
+
+/* Build footer (commit hash), bottom right. Hidden in stereo with the other DOM panels (.ui). */
+#build { position: fixed; right: 8px; bottom: 4px; z-index: 9; font: 11px ui-monospace, monospace; color: #8fa0bd; pointer-events: none; }

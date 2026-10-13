@@ -1,0 +1,48 @@
+# Copy to .github/workflows/deploy.yml in YOUR repo (package.json at the repo root).
+# Deploys on every push to main. Branch policy: finish work on a branch, merge to main, push main, tag, push the tags,
+# then open the Actions tab and confirm the Pages run used the commit you tagged (the page footer shows the same hash).
+# Then: Settings > Pages > Source = GitHub Actions.
+# Action major versions = latest releases reported by the GitHub API on 2026-10-03. This workflow has not been run by the course team.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          COMMIT_SHA: ${{ github.sha }}   # shown in the page footer (vite.config.js keeps the first 7 characters)
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
