@@ -101,9 +101,9 @@ export function createEnvironment(scene) {
   root.add(models);
   const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;
-  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-3.2, 0, -4.2); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
+  loader.load(url('sofa.glb'), (g) => { g.scene.position.set(-4.4, 0, -5.8); g.scene.rotation.y = 0.5; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('sofa.glb did not load', e));
-  loader.load(url('car.glb'), (g) => { g.scene.position.set(5.5, 0, -9); g.scene.rotation.y = -1.2; castAndReceive(g.scene); models.add(g.scene); }, undefined,
+  loader.load(url('car.glb'), (g) => { g.scene.position.set(2, 0, -12); g.scene.rotation.y = -1.35; castAndReceive(g.scene); models.add(g.scene); }, undefined,
     (e) => console.warn('car.glb did not load', e));
 
   // mode: 'all' | 'solids' | 'models'. Older saved settings held true or false: treat anything else as 'all'.
