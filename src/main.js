@@ -10,6 +10,7 @@ import { LookControls } from './look.js';
 import { createCapsPanel } from './capabilities.js';
 import { addMyContent } from './my-scene.js';
 import { addFooter } from './footer.js';
+import { FpsCounter } from './fps.js';
 
 // ---- Core: renderer, scene, camera inside a rig ---------------------------------------------------------------
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -29,6 +30,7 @@ const env = createEnvironment(scene);
 const mine = addMyContent(scene);
 mine.mine.castShadow = mine.mine.receiveShadow = true;
 const look = new LookControls(camera, renderer.domElement, settings);
+const fps = new FpsCounter(60);                  // the frame-rate box under the toolbar
 
 // ---- DOM UI -----------------------------------------------------------------------------------------------------
 const renderMode = () => (renderer.xr.isPresenting ? 'immersive-vr (WebXR)' : 'monocular');
@@ -49,7 +51,9 @@ document.body.append(
     button('Recenter', () => look.recenter()),
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
     button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length])),
-    button('Shadows', () => set('shadows', !settings.shadows))));
+    button('Shadows', () => set('shadows', !settings.shadows)),
+    fps.el));
+fps.el.hidden = !settings.showFps;
 
 addFooter();   // "build <commit hash>": shows which commit a deployed page was built from
 
@@ -74,13 +78,14 @@ function refreshSources() {
 renderer.xr.addEventListener('sessionstart', () => {
   const s = renderer.xr.getSession();
   caps.setSessionState('YES (session started)');
+  fps.setTarget(s.frameRate || 72);               // the headset's refresh rate, if the browser reports it
   rig.position.y = (s.enabledFeatures && !s.enabledFeatures.includes('local-floor')) ? 1.6 : 0;
   s.addEventListener('inputsourceschange', refreshSources);
   refreshSources();
 });
 renderer.xr.addEventListener('sessionend', () => {
   camera.position.set(0, 1.6, 0); camera.quaternion.identity(); rig.position.y = 0;
-  caps.setSessionState('ended'); refreshSources(); resize();
+  fps.setTarget(60); caps.setSessionState('ended'); refreshSources(); resize();
 });
 
 // ---- Resize + loop ----------------------------------------------------------------------------------------------
@@ -92,8 +97,12 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
+let last = 0;
 renderer.setAnimationLoop((now) => {              // not requestAnimationFrame: XR needs the session's own loop
   const t = now / 1000;
+  const dt = last ? Math.min(t - last, 0.25) : 0;   // seconds since the last frame (capped after a pause)
+  last = t;
+  if (dt) fps.tick(dt);
   if (!renderer.xr.isPresenting) look.update();    // in a headset, the headset owns the camera pose
   env.update(t); mine.update(t);
   renderer.render(scene, camera);
@@ -109,4 +118,4 @@ startOverlay({
   onStart: () => { look.requestPermission(); },    // synchronous inside the click: iOS needs the user gesture
 });
 
-window.hcd = { renderer, scene, camera, rig, look, settings, caps };   // handy in the console
+window.hcd = { renderer, scene, camera, rig, look, settings, caps, fps };   // handy in the console
