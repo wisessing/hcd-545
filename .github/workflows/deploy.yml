@@ -1,8 +1,5 @@
-# Copy to .github/workflows/deploy.yml in YOUR repo (package.json at the repo root).
-# Deploys on every push to main. Branch policy: finish work on a branch, merge to main, push main, tag, push the tags,
-# then open the Actions tab and confirm the Pages run used the commit you tagged (the page footer shows the same hash).
-# Then: Settings > Pages > Source = GitHub Actions.
-# Action major versions = latest releases reported by the GitHub API on 2026-10-03. This workflow has not been run by the course team.
+# Builds lab1/ and lab2/ (each a Vite project) and publishes them with the root index.html.
+# Settings > Pages > Source = GitHub Actions.
 name: Deploy to GitHub Pages
 
 on:
@@ -28,10 +25,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache-dependency-path: '*/package-lock.json'
+      - name: Build each lab
         env:
-          COMMIT_SHA: ${{ github.sha }}   # shown in the page footer (vite.config.js keeps the first 7 characters)
+          COMMIT_SHA: ${{ github.sha }}   # shown in each page footer
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          for lab in lab1 lab2; do
+            (cd "$lab" && npm ci && npm run build -- --outDir "../dist/$lab" --emptyOutDir)
+          done
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
