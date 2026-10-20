@@ -62,7 +62,7 @@ export function startOverlay({ title, lines, onStart }) {
     h('div', { class: 'card' },
       h('h1', {}, title),
       ...lines.map((l) => h('p', {}, l)),
-      button('Start', () => { onStart(); overlay.remove(); }, 'primary')));
+      button('Start', () => { onStart(); overlay.remove(); document.body.classList.add('started'); }, 'primary')));   // 'started' shows ENTER VR (style.css)
   document.body.append(overlay);
   return overlay;
 }
