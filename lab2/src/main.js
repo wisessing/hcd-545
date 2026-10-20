@@ -73,9 +73,8 @@ function setStereo(on) {
 }
 
 document.body.append(
-  h('div', { class: 'stack' },
-    h('div', { class: 'shows' }, caps.showBtn, panel.showBtn),
-    caps.el, panel.el),
+  h('div', { class: 'stack' },             // one column: each button is replaced by its panel when opened
+    caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
     button('Stereo', () => setStereo(!stereo.enabled)),
     button('Turn left', () => comfort.turn(-1)),
