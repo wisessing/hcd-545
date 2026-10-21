@@ -6,8 +6,12 @@ import { set } from './settings.js';
 //   turnMode:  'snap' | 'smooth'
 //   snapAngle: degrees per turn (the Turn angle slider goes from 15 to 90 in steps of 15)
 //   latencyMs: leave at 0; added latency only ever makes comfort worse
+// sensitive:   the most protection; a constant vignette (stronger during motion) narrows the view to cut the motion you see.
+// comfortable: snap turning, vignette only while moving.
+// intense:     smooth turning (90 degrees per second), no vignette.
+// The snap angle changes how far each jump goes, not how much motion you see.
 export const presets = {
-  sensitive:   { vignette: 'always', turnMode: 'snap',   snapAngle: 45, latencyMs: 0 },
+  sensitive:   { vignette: 'always', turnMode: 'snap',   snapAngle: 30, latencyMs: 0 },
   comfortable: { vignette: 'motion', turnMode: 'snap',   snapAngle: 30, latencyMs: 0 },
   intense:     { vignette: 'off',    turnMode: 'smooth', snapAngle: 30, latencyMs: 0 },
 };
