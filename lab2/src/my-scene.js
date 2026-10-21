@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { settings } from './settings.js';
 
 // YOUR TURN (Lab 1, Task 4): make this scene yours. Works as-is; change it, then reload on your phone.
-//  1. Change the shape, colour, size and position of `mine`. Keep it between 0.5 m and 5 m from the start (0, 0, 0).
+//  1. Change the shape, color, size and position of `mine`. Keep it between 0.5 m and 5 m from the start (0, 0, 0).
 //  2. Add a second object that gives a scale cue (something a person knows the size of: a chair 0.45 m seat height, a mug 0.1 m).
-//  3. Move or recolour the point light and look at what changes.
+//  3. Move or recolor the point light and look at what changes.
 export function addMyContent(scene) {
   const mine = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 0.4, 0.4),

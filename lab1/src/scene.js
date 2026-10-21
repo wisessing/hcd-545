@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { settings } from './settings.js';
 
-// 1 three.js unit = 1 metre. A real-size sofa and car are the scale cues that tell the brain how big the room is.
+// 1 three.js unit = 1 meter. A real-size sofa and car are the scale cues that tell the brain how big the room is.
 function canvasTexture(w, h, draw) {
   const c = document.createElement('canvas');
   c.width = w; c.height = h;
@@ -75,7 +75,7 @@ export function createEnvironment(scene) {
   const target = new THREE.Group();
   root.add(props, target);
   const palette = [0xe4572e, 0x29b6f6, 0xf6c445, 0x8e6bbf, 0x4caf7d];
-  // [x, y, z, size]: y is the centre height. Some solids float above the floor, some rest on it (y = size / 2). Shadows show which.
+  // [x, y, z, size]: y is the center height. Some solids float above the floor, some rest on it (y = size / 2). Shadows show which.
   const specs = [
     [-0.7, 1.2, -4, 0.5], [2.2, 0.5, -4, 1.0], [0, 0.9, -2, 0.3], [7.5, 0.75, -9, 1.5],
     [-5, 1.0, -14, 2.0], [-4, 1.0, 2, 0.6], [4, 0.4, 3, 0.8], [0, 0.5, 6, 1.0],
@@ -95,8 +95,8 @@ export function createEnvironment(scene) {
   orbiter.castShadow = orbiter.receiveShadow = true;
   props.add(orbiter);
 
-  // Real-size scale cues: a sofa (2.73 x 1.12 x 0.92 m) and a car (2.54 x 1.15 x 4.36 m). Both glTF files are in metres and are
-  // used at their authored size. See public/models/CREDITS.md for the source, the licence and the size check.
+  // Real-size scale cues: a sofa (2.73 x 1.12 x 0.92 m) and a car (2.54 x 1.15 x 4.36 m). Both glTF files are in meters and are
+  // used at their authored size. See public/models/CREDITS.md for the source, the license and the size check.
   const models = new THREE.Group();
   root.add(models);
   const url = (name) => `${import.meta.env.BASE_URL}models/${name}`;

@@ -11,7 +11,7 @@ export const defaults = {
   shadows: false,         // sun shadows on or off (they show which objects float and which sit on the floor)
   cues: 'solids',         // scale cues (the sofa and car load only when asked for): 'all' | 'solids' (geometric solids only) | 'models' (sofa and car only)
   // Lab 2
-  ipd: 0.064,             // metres, used by StereoEffect.setEyeSeparation
+  ipd: 0.064,             // meters, used by StereoEffect.setEyeSeparation
   latencyMs: 0,           // artificial head-tracking latency
   vignette: 'motion',     // 'off' | 'motion' | 'always'
   turnMode: 'snap',       // 'snap' | 'smooth'

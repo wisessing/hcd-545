@@ -105,7 +105,7 @@ renderer.domElement.addEventListener('pointerup', (e) => {
 });
 
 onChange((key) => {
-  if (key === 'ipd') stereo.setIpd(settings.ipd);      // eye separation in metres
+  if (key === 'ipd') stereo.setIpd(settings.ipd);      // eye separation in meters
   if (key === 'viewerFit' || key === 'lensSpacing') stereo.setFit(settings.viewerFit, settings.lensSpacing);
   if (key === 'sky') env.setSky(settings.sky);
   if (key === 'cues') applyCues();
