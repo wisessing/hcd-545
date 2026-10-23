@@ -131,7 +131,7 @@ renderer.xr.addEventListener('sessionstart', () => {
   if (stereo.enabled) setStereo(false);              // the headset does its own stereo
   caps.setSessionState('YES (session started)');
   rig.position.y = (s.enabledFeatures && !s.enabledFeatures.includes('local-floor')) ? 1.6 : 0;
-  fps.setTarget(s.frameRate || 72);
+  fps.setTarget(s.frameRate || 72, 72);           // in a headset the minimum is 72 fps
   s.addEventListener('inputsourceschange', refreshSources);
   refreshSources();
 });
