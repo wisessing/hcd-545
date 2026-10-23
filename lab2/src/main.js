@@ -82,10 +82,10 @@ document.body.append(
     caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
     button('Stereo', () => setStereo(!stereo.enabled), 'act'),
-    button('Turn left (Q)', () => comfort.turn(-1), 'gap'),   // group 2 (dark gray): moving in the scene
-    button('Turn right (E)', () => comfort.turn(1)),
-    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }),
-    button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }),   // face the start direction: also undoes turns
+    button('Turn left (Q)', () => comfort.turn(-1), 'move gap'),   // group 2 (CMKL red): moving in the scene
+    button('Turn right (E)', () => comfort.turn(1), 'move'),
+    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }, 'move'),
+    button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }, 'move'),   // face the start direction: also undoes turns
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }, 'view gap'),   // group 3 (muted gray): how the scene looks
     button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length]), 'view'),
     button('Shadows', () => set('shadows', !settings.shadows), 'view'),
