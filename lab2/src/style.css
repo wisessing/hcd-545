@@ -20,7 +20,7 @@ html, body { margin: 0; height: 100%; background: #000; color: var(--paper); fon
 canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
 
-/* Buttons: dark gray by default; orange (solid, black text) for Stereo; muted gray for the view buttons (Sky, Cues, Shadows). */
+/* Buttons: dark gray by default (Sky, Cues, Shadows); orange (solid, black text) for Stereo; muted gray for moving (Turn, Blink test, Recenter). */
 .btn { font: inherit; color: var(--paper); background: var(--graphite); border: 1px solid rgba(255, 255, 255, .22); border-radius: 3px;
   padding: 10px 12px; min-height: 44px; min-width: 44px; cursor: pointer; }
 .btn:hover { border-color: rgba(255, 255, 255, .5); }
@@ -37,7 +37,7 @@ output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
   gap: 6px; max-height: calc(100vh - var(--st) - var(--sb) - 34px); z-index: 10; }
 #bar .btn { white-space: nowrap; text-align: left; }
 #bar .btn.gap { margin-top: 10px; }   /* gaps between the three groups: Stereo | turning and moving | view */
-.btn.view { background: rgba(102, 102, 102, .85); border-color: rgba(255, 255, 255, .18); }   /* muted gray (#666): white text 5.7:1 */
+.btn.muted { background: rgba(102, 102, 102, .85); border-color: rgba(255, 255, 255, .18); }   /* muted gray (#666): white text 5.7:1 */
 
 /* Panels: Capabilities and Settings in one column at the top right; an open panel takes its button's place. */
 .stack { position: fixed; top: var(--st); right: var(--sr); width: min(340px, calc(100vw - var(--sl) - var(--sr) - 156px)); max-height: calc(100vh - var(--st) - var(--sb) - 34px); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }

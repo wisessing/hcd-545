@@ -7,9 +7,9 @@ const prefersReduced = (() => {
 
 export const defaults = {
   // Lab 1
-  sky: 'checker',         // 'gradient' | 'checker' | 'dark'
-  shadows: false,         // sun shadows on or off (they show which objects float and which sit on the floor)
-  cues: 'solids',         // scale cues (the sofa and car load only when asked for): 'all' | 'solids' (geometric solids only) | 'models' (sofa and car only)
+  sky: 'gradient',        // 'gradient' | 'checker' | 'dark'
+  shadows: true,          // sun shadows on or off (they show which objects float and which sit on the floor)
+  cues: 'all',            // scale cues (the sofa and car download when shown): 'all' | 'solids' (geometric solids only) | 'models' (sofa and car only)
   // Lab 2
   ipd: 0.064,             // meters, used by StereoEffect.setEyeSeparation
   viewerFit: false,       // stereo view: draw each eye under its lens, as in a cardboard viewer (stereo.js)
