@@ -59,9 +59,14 @@ applyCues();
 env.setShadows(settings.shadows);
 
 const caps = createCapsPanel({ lab: 'lab2', look, getRenderMode: renderMode, getInputMode: () => (renderer.xr.isPresenting ? 'headset (XR)' : look.mode) });
-const panel = createSettingsPanel({ sections: ['xp', 'comfort'] });   // IPD, latency, FPS, vignette, turning (settings-panel.js)
-
 let presetIndex = 0;
+const presetBtn = button('Comfort preset', (e) => {   // applies the next preset from my-comfort.js and shows its name on the button
+  const name = presetNames[presetIndex];
+  presetIndex = (presetIndex + 1) % presetNames.length;
+  applyPreset(name);
+  e.currentTarget.textContent = `Comfort: ${name}`;
+});
+const panel = createSettingsPanel({ sections: ['xp', 'comfort'], comfortButtons: [presetBtn] });   // IPD ... turning, Comfort preset (settings-panel.js)
 // Blink test: Lab 3 adds teleport pads; until then this button runs the same blink teleport (vignette tunnel, fade, move, fade back)
 // between two spots so you can check that the vignette closes during a teleport. Set Comfort vignette to Off and compare.
 let blinkSpot = 0;
@@ -76,16 +81,10 @@ document.body.append(
   h('div', { class: 'stack' },             // one column: each button is replaced by its panel when opened
     caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
-    button('Stereo', () => setStereo(!stereo.enabled)),
-    button('Turn left', () => comfort.turn(-1)),
-    button('Turn right', () => comfort.turn(1)),
-    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }),
-    button('Comfort preset', (e) => {   // applies the next preset from my-comfort.js and shows its name on the button
-      const name = presetNames[presetIndex];
-      presetIndex = (presetIndex + 1) % presetNames.length;
-      applyPreset(name);
-      e.currentTarget.textContent = `Comfort: ${name}`;
-    }),
+    button('Stereo', () => setStereo(!stereo.enabled), 'act'),
+    button('Turn left', () => comfort.turn(-1), 'act'),
+    button('Turn right', () => comfort.turn(1), 'act'),
+    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }, 'act'),
     button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }),   // face the start direction: also undoes turns
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
     button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length])),

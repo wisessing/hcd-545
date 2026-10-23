@@ -3,7 +3,8 @@ import { h, button, slider, checkbox, select, closablePanel } from './ui.js';
 
 // DOM settings panel with a close button. Sections: 'xp' (Lab 2 perception experiment), 'comfort', 'access' (Lab 3).
 // DOM does not appear inside a stereo split screen or a headset, so set values in mono first (Lab 3 adds 3D buttons: menu.js).
-export function createSettingsPanel({ sections, open = true }) {
+// comfortButtons: extra buttons shown under the comfort settings (the Comfort preset button from main.js).
+export function createSettingsPanel({ sections, open = true, comfortButtons = [] }) {
   const controls = {};
   const rows = [];
   const add = (key, el) => { controls[key] = el; rows.push(el); };
@@ -25,6 +26,7 @@ export function createSettingsPanel({ sections, open = true }) {
       value: settings.turnMode, onInput: (v) => set('turnMode', v) }));
     add('snapAngle', slider({ label: 'Turn angle (deg)', min: 15, max: 90, step: 15, value: settings.snapAngle,
       format: (v) => v.toFixed(0), onInput: (v) => set('snapAngle', v) }));
+    if (comfortButtons.length) rows.push(h('div', { class: 'btnrow' }, ...comfortButtons));
   }
   if (sections.includes('access')) {
     add('gazeEnabled', checkbox({ label: 'Gaze activation (dwell)', value: settings.gazeEnabled, onInput: (v) => set('gazeEnabled', v) }));

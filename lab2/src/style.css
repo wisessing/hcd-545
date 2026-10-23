@@ -9,6 +9,7 @@ canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 .btn { font: inherit; color: var(--fg); background: rgba(20, 30, 50, .85); border: 1px solid #5d7aa6; border-radius: 8px; padding: 10px 12px; min-height: 44px; min-width: 44px; cursor: pointer; }
 .btn:active, .btn:focus-visible { outline: 2px solid #fff; background: var(--accent); }
 .btn.primary { background: var(--accent); }
+.btn.act { background: rgba(70, 30, 15, .9); border-color: #ff572b; }   /* Stereo, Turn left/right, Blink test: the Lab 2 actions */
 
 [hidden] { display: none !important; }
 /* Toolbar: a column at the top left. When the screen is too short (a phone in landscape) the buttons continue in a second column,
