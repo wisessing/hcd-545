@@ -8,18 +8,22 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
   const controls = {};
   const rows = [];
   const add = (key, el) => { controls[key] = el; rows.push(el); };
+  const group = (title) => rows.push(h('p', { class: 'group' }, title));   // quiet heading that matches a part of the worksheet
 
   if (sections.includes('xp')) {
+    group('Experiment');
     add('ipd', slider({ label: 'IPD (mm)', min: 40, max: 90, step: 1, value: settings.ipd * 1000, format: (v) => v.toFixed(0),
       onInput: (v) => set('ipd', v / 1000) }));
     add('latencyMs', slider({ label: 'Added latency (ms)', min: 0, max: 400, step: 10, value: settings.latencyMs, format: (v) => v.toFixed(0),
       onInput: (v) => set('latencyMs', v) }));
+    add('showFps', checkbox({ label: 'Show FPS (developer)', value: settings.showFps, onInput: (v) => set('showFps', v) }));
+    group('Cardboard viewer');
     add('viewerFit', checkbox({ label: 'Viewer fit (cardboard)', value: settings.viewerFit, onInput: (v) => set('viewerFit', v) }));
     add('lensSpacing', slider({ label: 'Lens spacing (mm)', min: 50, max: 75, step: 1, value: settings.lensSpacing,
       format: (v) => v.toFixed(0), onInput: (v) => set('lensSpacing', v) }));
-    add('showFps', checkbox({ label: 'Show FPS (developer)', value: settings.showFps, onInput: (v) => set('showFps', v) }));
   }
   if (sections.includes('comfort')) {
+    group('Comfort');
     add('vignette', select({ label: 'Comfort vignette', options: [['off', 'Off'], ['motion', 'During motion'], ['always', 'Always']],
       value: settings.vignette, onInput: (v) => set('vignette', v) }));
     add('turnMode', select({ label: 'Turning', options: [['snap', 'Snap'], ['smooth', 'Smooth']],
@@ -28,6 +32,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       format: (v) => v.toFixed(0), onInput: (v) => set('snapAngle', v) }));
   }
   if (sections.includes('access')) {
+    group('Accessibility');
     add('gazeEnabled', checkbox({ label: 'Gaze activation (dwell)', value: settings.gazeEnabled, onInput: (v) => set('gazeEnabled', v) }));
     add('dwell', slider({ label: 'Dwell time (s)', min: 0.5, max: 3, step: 0.1, value: settings.dwell,
       format: (v) => v.toFixed(1), onInput: (v) => set('dwell', v) }));
