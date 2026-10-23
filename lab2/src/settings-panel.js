@@ -3,7 +3,7 @@ import { h, button, slider, checkbox, select, closablePanel } from './ui.js';
 
 // DOM settings panel with a close button. Sections: 'xp' (Lab 2 perception experiment), 'comfort', 'access' (Lab 3).
 // DOM does not appear inside a stereo split screen or a headset, so set values in mono first (Lab 3 adds 3D buttons: menu.js).
-// comfortButtons: extra buttons shown under the comfort settings (the Comfort preset button from main.js).
+// comfortButtons: extra buttons for the bottom-left of the panel (the Comfort preset button from main.js); Reset settings sits bottom right.
 export function createSettingsPanel({ sections, open = true, comfortButtons = [] }) {
   const controls = {};
   const rows = [];
@@ -26,7 +26,6 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       value: settings.turnMode, onInput: (v) => set('turnMode', v) }));
     add('snapAngle', slider({ label: 'Turn angle (deg)', min: 15, max: 90, step: 15, value: settings.snapAngle,
       format: (v) => v.toFixed(0), onInput: (v) => set('snapAngle', v) }));
-    if (comfortButtons.length) rows.push(h('div', { class: 'btnrow' }, ...comfortButtons));
   }
   if (sections.includes('access')) {
     add('gazeEnabled', checkbox({ label: 'Gaze activation (dwell)', value: settings.gazeEnabled, onInput: (v) => set('gazeEnabled', v) }));
@@ -54,13 +53,11 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
     extra.push(
       h('div', { class: 'btnrow' },
         button('Start 10-target trial', () => api.onStartTrial?.()),
-        button('Reset height', () => api.onResetHeight?.()),
-        button('Reset settings', () => reset())),
+        button('Reset height', () => api.onResetHeight?.())),
       h('p', { class: 'hint' }, 'The trial times how long each target takes. Change dwell time and target size between runs and compare the mean.'),
       results);
-  } else {
-    extra.push(h('div', { class: 'btnrow' }, button('Reset settings', () => reset())));
   }
+  extra.push(h('div', { class: 'btnrow split' }, h('div', {}, ...comfortButtons), button('Reset settings', () => reset())));
 
   const title = sections.includes('access') ? 'Settings (comfort and accessibility)' : 'Settings';
   const el = closablePanel(title, () => setOpen(false), ...rows, ...extra);

@@ -82,8 +82,8 @@ document.body.append(
     caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
     button('Stereo', () => setStereo(!stereo.enabled), 'act'),
-    button('Turn left', () => comfort.turn(-1), 'act'),
-    button('Turn right', () => comfort.turn(1), 'act'),
+    button('Turn left (Q)', () => comfort.turn(-1), 'act'),
+    button('Turn right (E)', () => comfort.turn(1), 'act'),
     button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }, 'act'),
     button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }),   // face the start direction: also undoes turns
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),

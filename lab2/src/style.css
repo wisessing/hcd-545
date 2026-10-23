@@ -29,6 +29,7 @@ canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 .row input[type=range] { width: 100%; min-height: 32px; }
 .row output { text-align: right; font-variant-numeric: tabular-nums; }
 .btnrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.btnrow.split { justify-content: space-between; }   /* Comfort preset bottom left, Reset settings bottom right */
 table.caps { width: 100%; border-collapse: collapse; font-size: 12px; }
 table.caps th { text-align: left; font-weight: 500; color: #aab8d0; padding: 2px 6px 2px 0; vertical-align: top; width: 48%; }
 table.caps td { padding: 2px 0; word-break: break-word; }
