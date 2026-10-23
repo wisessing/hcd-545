@@ -1,5 +1,5 @@
 // One settings store shared by every lab. Unused keys in early labs are harmless.
-const KEY = 'hcd545-webxr-settings-v1';
+const KEY = 'hcd545-webxr-settings-lab2';   // Lab 2's own saved settings, so values saved by Lab 1 (shadows off, checker sky) do not override these defaults
 
 const prefersReduced = (() => {
   try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; }

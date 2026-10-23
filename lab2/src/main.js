@@ -71,6 +71,8 @@ const panel = createSettingsPanel({ sections: ['xp', 'comfort'], comfortButtons:
 // between two spots so you can check that the vignette closes during a teleport. Set Comfort vignette to Off and compare.
 let blinkSpot = 0;
 const blinkSpots = [new THREE.Vector3(0, 0, -3), new THREE.Vector3(0, 0, 0)];
+function blinkTest() { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }
+function recenter() { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }   // face the start direction: also undoes turns
 function setStereo(on) {
   if (on) stereo.enable(); else stereo.disable();   // enable() must run inside the click (fullscreen needs a gesture)
   document.body.classList.toggle('stereo', on);
@@ -82,10 +84,10 @@ document.body.append(
     caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
     button('Stereo', () => setStereo(!stereo.enabled), 'act'),
-    button('Turn left (Q)', () => comfort.turn(-1), 'gap'),   // group 2 (dark gray): moving in the scene
-    button('Turn right (E)', () => comfort.turn(1)),
-    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }),
-    button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }),   // face the start direction: also undoes turns
+    button('Turn left (Z)', () => comfort.turn(-1), 'gap'),   // group 2 (dark gray): moving in the scene
+    button('Turn right (C)', () => comfort.turn(1)),
+    button('Blink test (X)', blinkTest),
+    button('Recenter (R)', recenter),
     button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }, 'muted gap'),   // group 3 (muted gray): how the scene looks
     button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length]), 'muted'),
     button('Shadows', () => set('shadows', !settings.shadows), 'muted'),
@@ -94,7 +96,15 @@ document.body.append(
 fps.el.hidden = !settings.showFps;   // 'Show FPS (developer)' checkbox in the Settings panel
 addFooter();   // "build <commit hash>": shows which commit a deployed page was built from
 
-// In the stereo split screen the DOM buttons are hidden. Tap the far left or right edge of the screen to turn (Q / E on a keyboard).
+// Keyboard: X blink test, R recenter (Z / C turn: comfort.js). Ignored while typing in a field or choosing in a menu.
+// F is kept free: it is reserved for click / activate in a later lab.
+window.addEventListener('keydown', (e) => {
+  if (e.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) return;
+  if (e.code === 'KeyX') blinkTest();
+  if (e.code === 'KeyR') recenter();
+});
+
+// In the stereo split screen the DOM buttons are hidden. Tap the far left or right edge of the screen to turn (Z / C on a keyboard).
 let downX = 0;
 renderer.domElement.addEventListener('pointerdown', (e) => { downX = e.clientX; });
 renderer.domElement.addEventListener('pointerup', (e) => {
@@ -165,7 +175,7 @@ renderer.setAnimationLoop((now) => {              // not requestAnimationFrame: 
 startOverlay({
   title: 'HCD-545 WebXR starter (Lab 2)',
   lines: [
-    'Move your phone to look around, or drag with finger or mouse. Q / E (or the Turn buttons) turn the view.',
+    'Move your phone to look around, or drag with finger or mouse. Z / C (or the Turn buttons) turn the view.',
     'Press Stereo to split the screen for a phone viewer. Landscape works best.',
     'On iPhone and iPad the browser asks for motion access when you press Start. Please allow it.',
   ],

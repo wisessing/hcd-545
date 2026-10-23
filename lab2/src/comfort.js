@@ -41,10 +41,10 @@ export class Comfort {
     this.fade = 0; this.tunnel = 0; this.tp = null;   // tunnel 0..1: the vignette that closes during a blink teleport
     this.stickArmed = true;
     this._v = new THREE.Vector3();
-    window.addEventListener('keydown', (e) => {
-      if (e.repeat) return;
-      if (e.code === 'KeyQ') this.turn(-1);
-      if (e.code === 'KeyE') this.turn(1);
+    window.addEventListener('keydown', (e) => {   // Z / C turn (ignored while typing in a field or choosing in a menu)
+      if (e.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) return;
+      if (e.code === 'KeyZ') this.turn(-1);
+      if (e.code === 'KeyC') this.turn(1);
     });
   }
 
