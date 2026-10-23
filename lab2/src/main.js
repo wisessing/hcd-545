@@ -82,13 +82,13 @@ document.body.append(
     caps.showBtn, caps.el, panel.showBtn, panel.el),
   h('div', { id: 'bar' },
     button('Stereo', () => setStereo(!stereo.enabled), 'act'),
-    button('Turn left (Q)', () => comfort.turn(-1), 'muted gap'),   // group 2 (muted gray): moving in the scene
-    button('Turn right (E)', () => comfort.turn(1), 'muted'),
-    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }, 'muted'),
-    button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }, 'muted'),   // face the start direction: also undoes turns
-    button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }, 'gap'),   // group 3 (dark gray): how the scene looks
-    button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length])),
-    button('Shadows', () => set('shadows', !settings.shadows)),
+    button('Turn left (Q)', () => comfort.turn(-1), 'gap'),   // group 2 (dark gray): moving in the scene
+    button('Turn right (E)', () => comfort.turn(1)),
+    button('Blink test', () => { comfort.teleportTo(blinkSpots[blinkSpot]); blinkSpot = 1 - blinkSpot; }),
+    button('Recenter', () => { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }),   // face the start direction: also undoes turns
+    button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }, 'muted gap'),   // group 3 (muted gray): how the scene looks
+    button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length]), 'muted'),
+    button('Shadows', () => set('shadows', !settings.shadows), 'muted'),
     button('Exit stereo', () => setStereo(false), 'keep')),   // the only toolbar button shown in stereo
   fps.el);
 fps.el.hidden = !settings.showFps;   // 'Show FPS (developer)' checkbox in the Settings panel

@@ -20,7 +20,7 @@ html, body { margin: 0; height: 100%; background: #000; color: var(--paper); fon
 canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
 output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
 
-/* Buttons: dark gray by default (Sky, Cues, Shadows); orange (solid, black text) for Stereo; muted gray for moving (Turn, Blink test, Recenter). */
+/* Buttons: dark gray by default (Turn, Blink test, Recenter); orange (solid, black text) for Stereo; muted gray for the view buttons (Sky, Cues, Shadows). */
 .btn { font: inherit; color: var(--paper); background: var(--graphite); border: 1px solid rgba(255, 255, 255, .22); border-radius: 3px;
   padding: 10px 12px; min-height: 44px; min-width: 44px; cursor: pointer; }
 .btn:hover { border-color: rgba(255, 255, 255, .5); }
