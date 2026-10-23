@@ -48,12 +48,18 @@ const caps = createCapsPanel({ lab: 'lab1', look, getRenderMode: renderMode, get
 document.body.append(
   h('div', { class: 'stack' }, caps.el, caps.showBtn),
   h('div', { id: 'bar' },
-    button('Recenter', () => look.recenter()),
-    button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }),
-    button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length])),
-    button('Shadows', () => set('shadows', !settings.shadows)),
+    button('Recenter (R)', () => look.recenter()),
+    button('Sky', () => { const k = ['gradient', 'checker', 'dark']; set('sky', k[(k.indexOf(settings.sky) + 1) % k.length]); }, 'muted gap'),   // the view buttons
+    button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length]), 'muted'),
+    button('Shadows', () => set('shadows', !settings.shadows), 'muted'),
     fps.el));
 fps.el.hidden = !settings.showFps;
+
+// Keyboard: R recenters (as in Lab 2). Ignored while typing in a field or choosing in a menu. F is kept free for activate later.
+window.addEventListener('keydown', (e) => {
+  if (e.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) return;
+  if (e.code === 'KeyR') look.recenter();
+});
 
 addFooter();   // "build <commit hash>": shows which commit a deployed page was built from
 
