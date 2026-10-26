@@ -1,4 +1,4 @@
-# Builds lab1/ and lab2/ (each a Vite project) and publishes them with the root index.html.
+# Builds lab1/, lab2/ and primer/ (each a Vite project) and publishes them with the root index.html.
 # Settings > Pages > Source = GitHub Actions.
 name: Deploy to GitHub Pages
 
@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html dist/
-          for lab in lab1 lab2; do
+          for lab in lab1 lab2 primer; do
             (cd "$lab" && npm ci && npm run build -- --outDir "../dist/$lab" --emptyOutDir)
           done
       - uses: actions/configure-pages@v6
