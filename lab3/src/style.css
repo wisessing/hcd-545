@@ -48,7 +48,13 @@ output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
 .panel .close { min-height: 36px; min-width: 36px; padding: 4px 10px; background: transparent; }
 .panel .body { padding: 0 0 4px; }
 .group { margin: 12px 0 2px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--light); font-size: 13px; font-weight: 700; }
-.panel .body > .group:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.panel .body > .group:first-child, .panel [role=tabpanel] > .group:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+/* Settings tabs: four across on a laptop, two rows on a phone. The open tab is white on graphite with a white underline (not orange: a tab is not an action). */
+.tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 4px; margin: 0 0 10px; }
+.tab { font: inherit; font-size: 13px; color: var(--light); background: transparent; border: 0; border-bottom: 2px solid var(--line); min-height: 36px; padding: 4px 6px; cursor: pointer; }
+.tab:hover { color: var(--paper); }
+.tab[aria-selected=true] { color: var(--paper); font-weight: 700; border-bottom-color: var(--paper); }
+.tab:focus-visible { outline: 2px solid var(--paper); outline-offset: 1px; }
 .row { display: grid; grid-template-columns: 1.3fr 1fr 2.4em; gap: 8px; align-items: center; margin: 6px 0; }   /* wide label column: no wrapped labels */
 .row.check { grid-template-columns: 24px 1fr; }
 .row input[type=range] { width: 100%; min-height: 32px; accent-color: var(--light); }
@@ -105,6 +111,9 @@ body.contrast .btn:active { background: #ffeb3b; color: #000; }
 body.contrast .btn:focus-visible { outline: 3px solid #ffeb3b; }
 body.contrast .row select { background: #000; border: 2px solid #fff; }
 body.contrast .group { color: #fff; border-top-color: #fff; }
+body.contrast .tab { color: #fff; border-bottom-color: #666; }
+body.contrast .tab[aria-selected=true] { color: #ffeb3b; border-bottom: 3px solid #ffeb3b; }
+body.contrast .tab:focus-visible { outline: 3px solid #ffeb3b; }
 body.contrast .hint, body.contrast table.caps th { color: #fff; }
 body.contrast #fps, body.contrast #build { background: #000; color: #ffeb3b; border: 1px solid #fff; }
 body.contrast #fps.bad { background: #ffeb3b; color: #000; }

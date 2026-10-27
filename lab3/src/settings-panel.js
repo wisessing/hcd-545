@@ -2,15 +2,22 @@ import { settings, set, onChange, reset } from './settings.js';
 import { h, button, slider, checkbox, select, closablePanel } from './ui.js';
 
 // DOM settings panel with a close button. Sections: 'xp' (Lab 2 perception experiment), 'comfort', 'access' (Lab 3).
+// The settings sit on tabs so the panel fits a phone screen: Gaze (with the trial), Comfort, Access (with sound), Viewer (Lab 2).
 // DOM does not appear inside a stereo split screen or a headset, so set values in mono first (Lab 3 adds 3D buttons: menu.js).
 // comfortButtons: extra buttons for the bottom-left of the panel (the Comfort preset button from main.js); Reset settings sits bottom right.
 export function createSettingsPanel({ sections, open = true, comfortButtons = [] }) {
   const controls = {};
-  const rows = [];
-  const add = (key, el) => { controls[key] = el; rows.push(el); };
-  const group = (title) => rows.push(h('p', { class: 'group' }, title));   // small heading that matches a section of the worksheet
+  // Tabs in display order; add() and group() fill the tab chosen with on().
+  const tabs = [['access', 'Gaze'], ['comfort', 'Comfort'], ['access', 'Access'], ['xp', 'Viewer']]
+    .filter(([sec]) => sections.includes(sec)).map(([, label]) => ({ label, rows: [] }));
+  const rows = (label) => tabs.find((t) => t.label === label).rows;
+  let cur;
+  const on = (label) => { cur = rows(label); };
+  const add = (key, el) => { controls[key] = el; cur.push(el); };
+  const group = (title) => cur.push(h('p', { class: 'group' }, title));   // small heading inside a tab
 
   if (sections.includes('xp')) {
+    on('Viewer');
     group('Experiment');
     add('ipd', slider({ label: 'IPD (mm)', min: 40, max: 90, step: 1, value: settings.ipd * 1000, format: (v) => v.toFixed(0),
       onInput: (v) => set('ipd', v / 1000) }));
@@ -23,7 +30,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       format: (v) => v.toFixed(0), onInput: (v) => set('lensSpacing', v) }));
   }
   if (sections.includes('comfort')) {
-    group('Comfort');
+    on('Comfort');
     add('vignette', select({ label: 'Comfort vignette', options: [['off', 'Off'], ['motion', 'During motion'], ['always', 'Always']],
       value: settings.vignette, onInput: (v) => set('vignette', v) }));
     add('turnMode', select({ label: 'Turning', options: [['snap', 'Snap'], ['smooth', 'Smooth']],
@@ -32,15 +39,17 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       format: (v) => v.toFixed(0), onInput: (v) => set('snapAngle', v) }));
   }
   if (sections.includes('access')) {
-    group('Accessibility');
+    on('Gaze');
     add('gazeEnabled', checkbox({ label: 'Gaze activation (dwell)', value: settings.gazeEnabled, onInput: (v) => set('gazeEnabled', v) }));
     add('dwell', slider({ label: 'Dwell time (s)', min: 0.5, max: 3, step: 0.1, value: settings.dwell,
       format: (v) => v.toFixed(1), onInput: (v) => set('dwell', v) }));
     add('targetScale', slider({ label: 'Target size', min: 0.8, max: 1.6, step: 0.1, value: settings.targetScale,
       format: (v) => v.toFixed(1) + 'x', onInput: (v) => set('targetScale', v) }));
+    on('Access');
     add('reducedMotion', checkbox({ label: 'Reduced motion (forces snap turn, no animation)', value: settings.reducedMotion, onInput: (v) => set('reducedMotion', v) }));
     add('contrast', checkbox({ label: 'High contrast', value: settings.contrast, onInput: (v) => set('contrast', v) }));
     add('seated', checkbox({ label: 'Seated mode (headset: holds eye height at 1.6 m)', value: settings.seated, onInput: (v) => set('seated', v) }));
+    group('Sound');
     add('captions', checkbox({ label: 'Audio captions', value: settings.captions, onInput: (v) => set('captions', v) }));
     add('audio', checkbox({ label: 'Sound on', value: settings.audio, onInput: (v) => set('audio', v) }));
     add('volume', slider({ label: 'Volume', min: 0, max: 1, step: 0.1, value: settings.volume,
@@ -48,24 +57,33 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
   }
 
   const results = h('ol', { class: 'results' });
-  const extra = [];
   const api = {
-    addResult(text) { results.append(h('li', {}, text)); },
+    addResult(text) { results.append(h('li', {}, text)); api.show('Gaze'); },   // a finished trial opens the Gaze tab, where the results are
     onStartTrial: null,
     onResetHeight: null,
   };
   if (sections.includes('access')) {
-    extra.push(
-      h('div', { class: 'btnrow' },
-        button('Start 10-target trial', () => api.onStartTrial?.()),
-        button('Reset height', () => api.onResetHeight?.())),
+    rows('Gaze').push(
+      h('div', { class: 'btnrow' }, button('Start 10-target trial', () => api.onStartTrial?.())),
       h('p', { class: 'hint' }, 'The trial times how long each target takes. Change dwell time and target size between runs and compare the mean.'),
       results);
+    rows('Access').splice(3, 0, h('div', { class: 'btnrow' }, button('Reset height', () => api.onResetHeight?.())));   // after Seated mode
   }
-  extra.push(h('div', { class: 'btnrow split' }, h('div', {}, ...comfortButtons), button('Reset settings', () => reset())));
+  const footer = h('div', { class: 'btnrow split' }, h('div', {}, ...comfortButtons), button('Reset settings', () => reset()));
+
+  // Tab bar (one row on a laptop, two on a phone) and one page per tab; Reset settings stays below every tab.
+  const bar = h('div', { class: 'tabs', role: 'tablist' });
+  const pages = tabs.map((t) => h('div', { role: 'tabpanel', 'aria-label': t.label }, ...t.rows));
+  const tabBtns = tabs.map((t, i) => h('button', { type: 'button', class: 'tab', role: 'tab', onClick: () => show(i) }, t.label));
+  function show(i) {
+    pages.forEach((p, j) => { p.hidden = j !== i; });
+    tabBtns.forEach((b, j) => b.setAttribute('aria-selected', String(j === i)));
+  }
+  if (tabs.length > 1) bar.append(...tabBtns);
+  show(0);
 
   const title = sections.includes('access') ? 'Settings (comfort and accessibility)' : 'Settings';
-  const el = closablePanel(title, () => setOpen(false), ...rows, ...extra);
+  const el = closablePanel(title, () => setOpen(false), tabs.length > 1 ? bar : null, ...pages, footer);
   el.id = 'settings';
   const showBtn = button('Settings', () => setOpen(true), 'show');   // top right; brings the panel back
   function setOpen(v) { el.hidden = !v; showBtn.hidden = v; }
@@ -77,5 +95,5 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
     if (c) c.sync(key === 'ipd' ? value * 1000 : value);
   });
 
-  return Object.assign(api, { el, showBtn, setOpen });
+  return Object.assign(api, { el, showBtn, setOpen, show: (label) => show(tabs.findIndex((t) => t.label === label)) });
 }
