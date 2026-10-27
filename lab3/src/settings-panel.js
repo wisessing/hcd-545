@@ -4,7 +4,7 @@ import { h, button, slider, checkbox, select, closablePanel } from './ui.js';
 // DOM settings panel with a close button. Sections: 'xp' (Lab 2 perception experiment), 'comfort', 'access' (Lab 3).
 // The settings sit on tabs so the panel fits a phone screen: Gaze (with the trial), Comfort, Access (with sound), Viewer (Lab 2).
 // DOM does not appear inside a stereo split screen or a headset, so set values in mono first (Lab 3 adds 3D buttons: menu.js).
-// comfortButtons: extra buttons for the bottom-left of the panel (the Comfort preset button from main.js); Reset settings sits bottom right.
+// comfortButtons: extra buttons for the Comfort tab (the Comfort preset button from main.js); Reset settings sits bottom right, below every tab.
 export function createSettingsPanel({ sections, open = true, comfortButtons = [] }) {
   const controls = {};
   // Tabs in display order; add() and group() fill the tab chosen with on().
@@ -37,6 +37,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       value: settings.turnMode, onInput: (v) => set('turnMode', v) }));
     add('snapAngle', slider({ label: 'Turn angle (deg)', min: 15, max: 90, step: 15, value: settings.snapAngle,
       format: (v) => v.toFixed(0), onInput: (v) => set('snapAngle', v) }));
+    if (comfortButtons.length) cur.push(h('div', { class: 'btnrow' }, ...comfortButtons));
   }
   if (sections.includes('access')) {
     on('Gaze');
@@ -69,7 +70,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       results);
     rows('Access').splice(3, 0, h('div', { class: 'btnrow' }, button('Reset height', () => api.onResetHeight?.())));   // after Seated mode
   }
-  const footer = h('div', { class: 'btnrow split' }, h('div', {}, ...comfortButtons), button('Reset settings', () => reset()));
+  const footer = h('div', { class: 'btnrow split' }, h('div'), button('Reset settings', () => reset()));
 
   // Tab bar (one row on a laptop, two on a phone) and one page per tab; Reset settings stays below every tab.
   const bar = h('div', { class: 'tabs', role: 'tablist' });
