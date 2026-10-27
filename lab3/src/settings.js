@@ -25,7 +25,7 @@ export const defaults = {
   targetScale: 1.0,       // 0.8 - 1.6
   reducedMotion: prefersReduced,
   captions: true,
-  audio: true,
+  audio: false,           // off until you press the Sound button (bottom right), the 3D menu or Sound on in Settings
   volume: 0.8,
   // Added in Lab 2 and Lab 3 (unused keys are harmless in Lab 1)
   showFps: true,          // 'Show FPS (developer)': the FPS box; keep it on in the labs

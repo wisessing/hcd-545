@@ -114,6 +114,12 @@ env.setShadows(settings.shadows);
 
 const caps = createCapsPanel({ lab: 'lab3', look, getRenderMode: renderMode, getInputMode: () => input.mode });
 
+// Sound button, bottom right: the sound starts off; the label shows the current state (also Sound on in Settings and the 3D menu).
+const soundBtn = button('', () => set('audio', !settings.audio), 'ui');
+soundBtn.id = 'sound';
+function syncSoundBtn() { soundBtn.textContent = settings.audio ? 'Sound: on' : 'Sound: off'; soundBtn.setAttribute('aria-pressed', String(settings.audio)); }
+syncSoundBtn();
+
 function recenter() { look.recenter(); rig.rotation.y = 0; comfort.pendingYaw = 0; }   // face the start direction: also undoes turns
 function setStereo(on) {
   if (on) stereo.enable(); else stereo.disable();   // enable() must run inside the click (fullscreen needs a gesture)
@@ -133,7 +139,7 @@ document.body.append(
     button('Cues', () => set('cues', CUE_MODES[(cueIndex() + 1) % CUE_MODES.length]), 'muted'),
     button('Shadows', () => set('shadows', !settings.shadows), 'muted'),
     button('Exit stereo', () => setStereo(false), 'keep')),   // the only toolbar button shown in stereo
-  fps.el);
+  soundBtn, fps.el);
 fps.el.hidden = !settings.showFps;   // 'Show FPS (developer)' checkbox in the Settings panel
 
 // Keyboard: R recenters (Z / C turn: comfort.js; Enter / Space activate what you look at: input.js).
@@ -165,6 +171,7 @@ onChange((key) => {
   if (key === 'shadows') env.setShadows(settings.shadows);
   if (key === 'showFps') fps.el.hidden = !settings.showFps;
   if (key === 'audio' || key === 'volume') audio.sync();
+  if (key === 'audio') syncSoundBtn();
   if (key === 'contrast') applyContrast();
   if (key === 'seated') seated.onSettingChange();
 });

@@ -40,7 +40,7 @@ output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
 .btn.muted { background: rgba(102, 102, 102, .85); border-color: rgba(255, 255, 255, .18); color: #e6e6e6; }   /* muted gray (#666), off-white text (contrast 4.6:1): quieter than the turn group */
 
 /* Panels: Capabilities and Settings in one column at the top right; an open panel takes its button's place. */
-.stack { position: fixed; top: var(--st); right: var(--sr); width: min(340px, calc(100vw - var(--sl) - var(--sr) - 156px)); max-height: calc(100vh - var(--st) - var(--sb) - 34px); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
+.stack { position: fixed; top: var(--st); right: var(--sr); width: min(340px, calc(100vw - var(--sl) - var(--sr) - 156px)); max-height: calc(100vh - var(--st) - var(--sb) - 74px); overflow: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; z-index: 10; }
 .stack .panel { width: 100%; }
 .stack > .btn { width: 7.5em; }   /* Capabilities and Settings buttons the same width */
 .panel { background: var(--graphite); border: 1px solid rgba(255, 255, 255, .14); border-radius: 3px; padding: 4px 12px 8px; }
@@ -95,6 +95,9 @@ body.stereo #bar .keep { display: inline-block; margin-top: 0; }
   border: 1px solid var(--orange) !important; border-radius: 3px !important; font: 700 14px 'Anuphan', system-ui, sans-serif !important; opacity: 1 !important; z-index: 10; }
 body:not(.started) .vrbtn { display: none !important; }   /* no ENTER VR until Start is pressed */
 body.stereo .vrbtn { display: none !important; }
+
+/* Sound button, bottom right above the build footer (the sound starts off). Hidden in stereo with the other DOM panels (.ui). */
+#sound { position: fixed; right: var(--sr); bottom: calc(var(--sb) + 14px); z-index: 10; }
 
 /* Build footer (commit hash), bottom right. Hidden in stereo with the other DOM panels (.ui). */
 #build { position: fixed; right: var(--sr); bottom: max(4px, env(safe-area-inset-bottom)); z-index: 9; font-size: 11px; color: rgba(255, 255, 255, .6); pointer-events: none; }
