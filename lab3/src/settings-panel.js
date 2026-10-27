@@ -4,7 +4,7 @@ import { h, button, slider, checkbox, select, closablePanel } from './ui.js';
 // DOM settings panel with a close button. Sections: 'xp' (Lab 2 perception experiment), 'comfort', 'access' (Lab 3).
 // The settings sit on tabs so the panel fits a phone screen: Gaze (with the trial), Comfort, Access (with sound), Viewer (Lab 2).
 // DOM does not appear inside a stereo split screen or a headset, so set values in mono first (Lab 3 adds 3D buttons: menu.js).
-// comfortButtons: extra buttons for the Comfort tab (the Comfort preset button from main.js); Reset settings sits bottom right, below every tab.
+// comfortButtons: extra buttons for the Comfort tab (the Comfort preset button from main.js); Reset settings sits centered below every tab.
 export function createSettingsPanel({ sections, open = true, comfortButtons = [] }) {
   const controls = {};
   // Tabs in display order; add() and group() fill the tab chosen with on().
@@ -70,7 +70,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       results);
     rows('Access').splice(3, 0, h('div', { class: 'btnrow' }, button('Reset height', () => api.onResetHeight?.())));   // after Seated mode
   }
-  const footer = h('div', { class: 'btnrow split' }, h('div'), button('Reset settings', () => reset()));
+  const footer = h('div', { class: 'btnrow foot' }, button('Reset settings', () => reset(), 'small'));
 
   // Tab bar (one row on a laptop, two on a phone) and one page per tab; Reset settings stays below every tab.
   const bar = h('div', { class: 'tabs', role: 'tablist' });

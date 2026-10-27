@@ -62,7 +62,8 @@ output, #fps, .row input + output { font-variant-numeric: tabular-nums; }
 .row select { grid-column: span 2; font: inherit; min-height: 36px; color: var(--paper); background: #262626; border: 1px solid rgba(255, 255, 255, .3); border-radius: 3px; padding: 0 6px; }
 .row output { text-align: right; font-weight: 700; }
 .btnrow { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.btnrow.split { justify-content: space-between; margin-top: 14px; }   /* Reset settings bottom right, below every tab */
+.btnrow.foot { justify-content: center; margin: 14px 0 4px; }   /* Reset settings, centered below every tab */
+.btn.small { font-size: 13px; min-height: 36px; padding: 6px 12px; }   /* a quiet button that is rarely needed */
 table.caps { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.caps th { text-align: left; font-weight: 400; color: var(--light); padding: 3px 8px 3px 0; vertical-align: top; width: 48%; }
 table.caps td { padding: 3px 0; word-break: break-word; }
