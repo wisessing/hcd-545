@@ -78,6 +78,7 @@ const trial = new Trial({
 });
 panel.onStartTrial = () => trial.start(10);
 panel.onResetHeight = () => seated.reset();
+panel.onReset = () => { presetIndex = 0; presetBtn.textContent = 'Comfort preset'; };   // the defaults are no preset
 const menu = createMenu({ scene, gaze, actions: {     // the 3D menu to the right of the start position (menu.js)
   turn: (d) => comfort.turn(d),
   startTrial: () => trial.start(10),

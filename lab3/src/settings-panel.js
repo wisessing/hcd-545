@@ -62,6 +62,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
     addResult(text) { results.append(h('li', {}, text)); api.show('Gaze'); },   // a finished trial opens the Gaze tab, where the results are
     onStartTrial: null,
     onResetHeight: null,
+    onReset: null,   // called after Reset settings (main.js puts the Comfort preset button back)
   };
   if (sections.includes('access')) {
     rows('Gaze').push(
@@ -70,7 +71,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       results);
     rows('Access').splice(3, 0, h('div', { class: 'btnrow' }, button('Reset height', () => api.onResetHeight?.())));   // after Seated mode
   }
-  const footer = h('div', { class: 'btnrow foot' }, button('Reset settings', () => reset(), 'link'));
+  const footer = h('div', { class: 'btnrow foot' }, button('Reset settings', () => { reset(); api.onReset?.(); }, 'link'));
 
   // Tab bar (one row on a laptop, two on a phone) and one page per tab; Reset settings stays below every tab.
   const bar = h('div', { class: 'tabs', role: 'tablist' });
