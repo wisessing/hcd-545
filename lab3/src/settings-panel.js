@@ -70,7 +70,7 @@ export function createSettingsPanel({ sections, open = true, comfortButtons = []
       results);
     rows('Access').splice(3, 0, h('div', { class: 'btnrow' }, button('Reset height', () => api.onResetHeight?.())));   // after Seated mode
   }
-  const footer = h('div', { class: 'btnrow foot' }, button('Reset settings', () => reset(), 'small'));
+  const footer = h('div', { class: 'btnrow foot' }, button('Reset settings', () => reset(), 'small muted'));
 
   // Tab bar (one row on a laptop, two on a phone) and one page per tab; Reset settings stays below every tab.
   const bar = h('div', { class: 'tabs', role: 'tablist' });
